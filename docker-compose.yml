@@ -1,0 +1,24 @@
+services:
+  backend:
+    build: ./backend
+    container_name: tresor-backend
+    ports:
+      - "8080:8080"
+    environment:
+      - PYTHONUNBUFFERED=1
+      - WALLETS_JSON=/data/dormant_wallets.json
+    volumes:
+      - ./data:/data:ro
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 10s
+      timeout: 3s
+      retries: 6
+
+  frontend:
+    build: ./frontend
+    container_name: tresor-frontend
+    depends_on:
+      - backend
+    ports:
+      - "5173:80"
